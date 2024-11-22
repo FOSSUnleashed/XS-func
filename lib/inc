@@ -1,0 +1,9 @@
+fn reinc {
+	. $_xs_func_base^/lib/inc
+}
+
+fn inc {|*|
+	for i $* {
+		. $_xs_func_base^/lib/^$i
+	}
+}

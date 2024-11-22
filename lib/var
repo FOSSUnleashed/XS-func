@@ -1,0 +1,34 @@
+fn priv {|name vals|
+	$name	= $vals
+
+	noexport $name
+}
+
+fn @ {|name vals|
+	name	= @^$name
+	$name	= $vals
+
+	noexport $name
+}
+
+fn priv.fn {|name body rest|
+	if {!~ $rest ()} {
+		throw error fn 'trailing arguments: ' $rest
+	} 
+	if {~ $name ()} {
+		throw error priv.fn 'missing arguments: correct form:'\
+			^' priv.fn name { |args| body }'
+	}
+	name	= fn-^$name
+	$name	= $body
+
+	noexport $name
+}
+
+fn noexport {|names|
+	for name $names {
+		{~ $name $noexport} || {
+			noexport	 = $name $noexport
+		}
+	}
+}

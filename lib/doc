@@ -1,0 +1,40 @@
+let (_docpath = $_xs_func_base^/doc) {
+	fn _docpath {|f xxx|
+		# we have a new path to add
+		if {~ $f /* && access -d $f} {
+			if {!~ $_docpath $f} {
+				_docpath = $f $_docpath
+			}
+
+			# we were given more paths, recurse
+			if {!~ $xxx} {
+				_docpath $xxx
+			}
+		} else {
+			result <={map {|x| if {access $x} {result $x} else { result }} $_docpath^/^$f^.md}
+		}
+	}
+
+	fn doc {|x y|
+		let (f = <={_docpath $x}) {
+			if {~ $f} {
+				echo NO RESULTS
+			} else {
+				bat $f(1)
+			}
+		}
+	}
+
+	fn doce {|x y|
+		let (f = <={_docpath $x}) {
+			if {~ $f} {
+				f = $_docpath^/^$x^.md
+			}
+			vim $f(1)
+		}
+	}
+
+	fn docs {
+		ls $_docpath
+	}
+}

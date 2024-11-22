@@ -1,0 +1,23 @@
+fn color.clear {
+	echo -n <=%color.clear
+}
+
+fn color.256 {|n __|
+	echo -n <={%color.256 $n}
+}
+
+fn %color.clear {
+	if {~ $TERM dumb} {
+		result ''
+	} else {
+		result \x1b[m
+	}
+}
+
+fn %color.256 {|n __|
+	if {~ $TERM dumb} {
+		result ''
+	} else {
+		result \x1b[38\;5\;^$n^m
+	}
+}

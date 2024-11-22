@@ -1,0 +1,8 @@
+#!/usr/bin/env rcxs
+
+_xs_func_base = `pwd
+
+{
+	var _xs_func_base
+	echo '. $_xs_func_base^/lib/inc'
+} > inc

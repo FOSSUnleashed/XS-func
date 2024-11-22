@@ -1,0 +1,122 @@
+# List functions
+#  - %first <list> -> first item of list
+#  - %last <list> -> last item of list
+#  - %shift <list> -> returns list with last item moved to first position
+#  - %constantly <list> -> returns a function that returns list F(A) -> (F() -> A)
+#  - %common <pack.list> <pack.list> -> returns items in common with both packed lists
+#  - %uniq <pack.list> <pack.list> -> returns items uniq to each list
+#  - %dedup <list> -> returns list without duplicates
+#  - %matcher <list> -> (F(A) -> (F(B) -> C) ) returns a function that takes a list that returns a list of common items between both lists
+#  - %unmatcher <list> -> compare %matcher, but return items in B that are not in A.
+#  - %missing <list> -> as %unmatcher, but instead returns items from A that are not in B
+#  - %filter <func> <list> - Return only the items in list that produce a true result from func
+
+fn %first {|f r|
+	result $f
+}
+
+fn %last {|l|
+	let (n = $#l) {
+		result $l($n)
+	}
+}
+
+fn %constantly {|l|
+	result { result $l }
+}
+
+fn %shift {|l|
+	let (n = $#l; m) {
+		if {~ $n 0 1} {
+			# nothing to do, do nothing
+			result $l
+		} else if {~ $n 2} {
+			result $l(2 1)
+		} else {
+			m = `($n - 1)
+			result $l($n 1 ... $m)
+		}
+	}
+}
+
+fn %common {|fn-p1 fn-p2|
+	let (list = <=p1; res = ()) {
+		for i <=p2 {
+			if {~ $i $list} {
+				res = $res $i
+			}
+		}
+		result $res
+	}
+}
+
+fn %uniq {|fn-p1 fn-p2|
+	let (list = <=p2; res = ()) {
+		for i <=p1 {
+			if {!~ $i $list} {
+				res = $res $i
+			}
+		}
+		list = <=p1
+		for i <=p2 {
+			if {!~ $i $list} {
+				res = $res $i
+			}
+		}
+		result $res
+	}
+}
+
+fn %dedup {|*|
+	let (list = ()) {
+		for i $* {
+			{~ $i $list} || {
+				list = $list $i
+			}
+		}
+		result $list
+	}
+}
+
+fn %matcher {|A|
+	result {|B|
+		let (res = ()) {
+			for i $B {
+				{~ $i $A} && res = $res $i
+			}
+			result $res
+		}
+	}
+}
+
+fn %unmatcher {|A|
+	result {|B|
+		let (res = ()) {
+			for i $B {
+				{~ $i $A} || res = $res $i
+			}
+			result $res
+		}
+	}
+}
+
+fn %missing {|A|
+	result {|B|
+		let (res = ()) {
+			for i $A {
+				{~ $i $B} || res = $res $i
+			}
+			result $res
+		}
+	}
+}
+
+fn %filter {|fn-f A|
+	map {|a|
+		if {f $a} {
+			result $a
+		} else {
+			result ()
+		}
+	} $A
+}
