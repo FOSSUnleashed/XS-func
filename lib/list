@@ -21,6 +21,10 @@ fn %last {|l|
 	}
 }
 
+fn %nth {|n l|
+	result $l($n)
+}
+
 fn %constantly {|l|
 	result { result $l }
 }
@@ -119,4 +123,43 @@ fn %filter {|fn-f A|
 			result ()
 		}
 	} $A
+}
+
+fn %partition {|fn-fn list|
+	let (a = ; b = ) {
+		for v $list {
+			if {fn $v} {
+				a = $a $v
+			} else {
+				b = $b $v
+			}
+		}
+		result <={%constantly $a} <={%constantly $b}
+	}
+}
+
+fn %index <={%escape {|fn-return key list|
+	local (i = 1) {
+		for v $list {
+			if {~ $v $key} {
+				return $i
+			}
+			i = `($i + 1)
+		}
+		result ()
+	}
+}}
+
+fn %remove {|i list|
+	local (len = $#list; b; a) {
+		b = `($i - 1)
+		if {~ $i 1} {
+			result $list(2 ...)
+		} else if {~ $i $len} {
+			result $list(... $b)
+		} else {
+			a = `($i + 1)
+			result $list(... $b $a ...)
+		}
+	}
 }

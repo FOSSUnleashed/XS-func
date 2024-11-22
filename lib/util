@@ -1,0 +1,29 @@
+fn %once {|fn-fn|
+	let (r = ; n = 0) {
+		result {|x|
+			if {~ $n 0} {
+				r = <={fn $x}
+				n = 1
+			}
+			result $r
+		}
+	}
+}
+
+fn %partial {|fn-fn inner|
+	result {|outer|
+		fn $inner $outer
+	}
+}
+
+fn %partialRight {|fn-fn inner|
+	result {|outer|
+		fn $outer $inner
+	}
+}
+
+fn %escape {|fn-fn|
+	result {|args|
+		escape {|return| fn $return $args}
+	}
+}

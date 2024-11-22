@@ -1,0 +1,71 @@
+inc list
+
+fn %keys {|list|
+	result {|key null|
+		if {~ $key} {
+			result $list
+		} else {
+			%index $key $list
+		}
+	}
+}
+
+fn %values {|list|
+	result {|key|
+		if {~ $key} {
+			result $list
+		} else {
+			result $list($key)
+		}
+	}
+}
+
+fn %has {|table key|
+	let (_T = <=$table; _K) {
+		_K = $_T(1) $key
+		if {~ $_K} false else true
+	}
+}
+
+fn %assoc {|kv_pairs|
+	local (K; V) {
+		for (k v) $kv_pairs {
+			# we don't have a pair, assume last item was a table
+			if {~ $v} {
+				local ((TK TV) = <=$k) {
+					echo MERGE
+					K = <=$TK $K
+					V = <=$TV $V
+				}
+			} else {
+				K = $K $k
+				V = $V $v
+			}
+		}
+
+		result <={%constantly <={%keys $K} <={%values $V}}
+	}
+}
+
+fn %dissoc {|T k|
+	local ((K V N) = <=$T; i) {
+		i = <={$K $k}
+
+		if {!~ $i} {
+			K = <={%keys <={%remove $i <=$K}}
+			V = <={%values <={%remove $i <=$V}}
+
+			T = <={%constantly $K $V $N}
+		}
+		result $T
+	}
+}
+
+fn %prop {|_T k|
+	local ((K V N) = <=$_T; i) {
+		i = <={$K $k}
+		if {!~ $i} {
+			$V $i
+		} else result
+	}
+}

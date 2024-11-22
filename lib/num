@@ -1,0 +1,33 @@
+fn %min {|a b|
+	let (r = $a) {
+		for v $b {
+			if {$v :lt $r} {
+				r = $v
+			}
+		}
+		result $r
+	}
+}
+
+fn %max {|a b|
+	let (r = $a) {
+		for v $b {
+			if {$v :gt $r} {
+				r = $v
+			}
+		}
+		result $r
+	}
+}
+
+fn %clamp {|low high value _|
+	let (r = $value) {
+		if {$r :lt $low} {
+			r = $low
+		} else if {$r :gt $high} {
+			r = $high
+		}
+
+		result $r
+	}
+}
