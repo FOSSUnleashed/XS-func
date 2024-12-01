@@ -1,0 +1,26 @@
+fn %sysroot {|directory extra|
+	let (fn-domount; fn-extra = $extra) {
+		if {~ $fn-extra} {
+			fn-extra = {}
+		}
+
+		fn-domount = {
+			fork {
+				cd $directory
+
+				if {!access -d proc/fs} {
+					sudo mount -t proc proc proc
+					sudo mount -t sysfs sys sys
+					sudo mount -o rbind /dev dev
+					extra
+				}
+			}
+		}
+
+		result {|args|
+			domount
+
+			sudo chroot $directory $args
+		}
+	}
+}
